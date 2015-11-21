@@ -1,0 +1,22 @@
+{
+  "name": "ravel",
+  "version": "0.1.0",
+  "description": "A logical game engine.",
+  "main": "index.js",
+  "scripts": {
+    "test": "vows --spec --isolate"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/psigen/ravel.git"
+  },
+  "keywords": [
+    "game"
+  ],
+  "author": "Pras Velagapudi <psigen@gmail.com>",
+  "license": "BSD-3-Clause",
+  "bugs": {
+    "url": "https://github.com/psigen/ravel/issues"
+  },
+  "homepage": "https://github.com/psigen/ravel#readme"
+}
