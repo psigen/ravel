@@ -6,7 +6,7 @@ html
     #editor(style="height: 500px; width: 800px")
         | Type in a word like "will" below and press ctrl+space or alt+space to get "rhyme completion"
     #commandline(style="position: absolute; bottom: 10px; height: 20px; width: 800px;")
-    #response
+    ul#response
 
   script(src="//rawgithub.com/ajaxorg/ace-builds/master/src/ace.js" type="text/javascript" charset="utf-8")
   script(src="//rawgithub.com/ajaxorg/ace-builds/master/src/ext-language_tools.js" type="text/javascript" charset="  utf-8")  
@@ -15,9 +15,9 @@ html
   script
     | var socket = io();
     | socket.on('output', function (output) {
-    |     $('#response').append(output);
+    |     $('#response').append("<li>" + output + "</li>");
     |     $('#response').animate({
-    |         scrollTop: $("#messages").height()
+    |         scrollTop: $("#response").scrollHeight()
     |     }, 300);
     | });
     | 

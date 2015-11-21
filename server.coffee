@@ -7,9 +7,8 @@ console_log = (args...) ->
 
 # Create a VM with access to console, but not native plugins.
 vm = new VM
-    console: 'redirect',
     timeout: 100,
-    sandbox: { "log": console_log }
+    sandbox: {}
 
 # Now we can use VM.run to execute stuff in the VM.
 # vm.run "while(true) { log('hello') }"
@@ -31,18 +30,15 @@ app.get '/', (req, res) ->
 io.on 'connection', (socket) ->
   console.log 'User connected.'
 
-  vm.on 'console.log', (args...) ->
-    socket.emit 'output', '[LOG]   ' + args
-  vm.on 'console.info', (args...) ->
-    socket.emit 'output', '[INFO]  ' + args
-  vm.on 'console.warn', (args...) ->
-    socket.emit 'output', '[WARN]  ' + args
-  vm.on 'console.error', (args...) ->
-    socket.emit 'output', '[ERROR] ' + args
-  vm.on 'console.dir', (args...) ->
-    socket.emit 'output', '[DIR]   ' + args
-  vm.on 'console.trace', (args...) ->
-    socket.emit 'output', '[TRACE] ' + args
+  sandbox =
+    log: (args...) ->
+        socket.emit 'output', '[LOG]   ' + args
+    info: (args...) ->
+        socket.emit 'output', '[INFO]  ' + args
+    warn: (args...) ->
+        socket.emit 'output', '[WARN]  ' + args
+    error: (args...) ->
+        socket.emit 'output', '[ERROR] ' + args
 
   socket.on 'disconnect', ->
     console.log 'User disconnected.'
@@ -50,6 +46,7 @@ io.on 'connection', (socket) ->
   socket.on 'execute', (command) ->
     console.log 'Executing...'
     try
+        vm.options.sandbox = sandbox
         vm.run command
     catch err
         console.error err
