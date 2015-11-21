@@ -2,8 +2,9 @@
   "name": "ravel",
   "version": "0.1.0",
   "description": "A logical game engine.",
-  "main": "index.js",
+  "main": "lib/ravel.js",
   "scripts": {
+    "start": "coffee server.coffee",
     "test": "vows --spec --isolate"
   },
   "repository": {
@@ -20,6 +21,7 @@
   },
   "homepage": "https://github.com/psigen/ravel#readme",
   "dependencies": {
-    "vm2": "*"
+    "vm2": "*",
+    "coffee-script": "*"
   }
 }
