@@ -21,7 +21,9 @@
   },
   "homepage": "https://github.com/psigen/ravel#readme",
   "dependencies": {
-    "vm2": "*",
-    "coffee-script": "*"
+    "coffee-script": "*",
+    "express": "^4.13.3",
+    "jade": "^1.11.0",
+    "vm2": "*"
   }
 }
