@@ -1,3 +1,7 @@
+# Register Coffeescript.
+require('coffee-script/register')
+require('./lib/ravel.coffee')
+
 VM = require('vm2').VM
 # NodeVM = require('vm2').NodeVM
 
