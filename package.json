@@ -18,5 +18,8 @@
   "bugs": {
     "url": "https://github.com/psigen/ravel/issues"
   },
-  "homepage": "https://github.com/psigen/ravel#readme"
+  "homepage": "https://github.com/psigen/ravel#readme",
+  "dependencies": {
+    "vm2": "*"
+  }
 }
