@@ -2,7 +2,7 @@
 require('coffee-script/register')
 require('./lib/ravel.coffee')
 {VM} = require 'vm2'
-# NodeVM = require('vm2').NodeVM
+# {NodeVM} = require 'vm2'
 
 # Create a safe (non-native) logging function to use inside the VM.
 console_log = (args...) ->
