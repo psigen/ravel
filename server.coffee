@@ -1,8 +1,7 @@
 # Register Coffeescript.
 require('coffee-script/register')
 require('./lib/ravel.coffee')
-
-VM = require('vm2').VM
+{VM} = require 'vm2'
 # NodeVM = require('vm2').NodeVM
 
 # Create a safe (non-native) logging function to use inside the VM.
