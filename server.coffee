@@ -13,9 +13,17 @@ vm = new VM
     timeout: 100,
     sandbox: {}
 
-# Now we can use VM.run to execute stuff in the VM.
-# vm.run "while(true) { log('hello') }"
+# Create some test code to load an XML file.
+fs = require 'fs'
+{parseString} = require 'xml2js'
 
+fs.readFile __dirname + '/config/map.svg', (err, data) ->
+  # TODO: check if this had an error loading.
+  parseString data, (err, result) ->
+    console.log result.svg.g[1].path
+    console.log 'Done.'
+
+# Start a web server with Socket.IO.
 express = require('express')
 app = express()
 http = require('http').Server(app)
