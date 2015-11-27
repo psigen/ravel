@@ -13,16 +13,6 @@ vm = new VM
     timeout: 100,
     sandbox: {}
 
-# Create some test code to load an XML file.
-fs = require 'fs'
-{parseString} = require 'xml2js'
-
-fs.readFile __dirname + '/config/map.svg', (err, data) ->
-  # TODO: check if this had an error loading.
-  parseString data, (err, result) ->
-    console.log result.svg.g[1].path
-    console.log 'Done.'
-
 # Start a web server with Socket.IO.
 express = require('express')
 app = express()

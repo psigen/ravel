@@ -8,9 +8,16 @@ class World
     @vm = new VM
       timeout: 100,
       sandbox: {}
+    setInterval @update, 1000.0 * @timestep
 
   load: (svg) ->
+    # TODO: implement this.
 
-
-  update: ->
+  update: (timestep) ->
     console.log "Updated world."
+
+    # Step physics forward by timestep.
+    @world.step(timestep);
+
+    # Re-execute object scripts as necessary.
+    @vm # DO STUFF
