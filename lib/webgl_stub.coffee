@@ -94,21 +94,6 @@ class Document
 
 class Image extends Element
 
-###
-`
-window = {
-  addEventListener: function () {},
-  setTimeout: setTimeout
-};
-navigator = {};
-alert = console.log;
-document = new Document();
-
-function HTMLElement() {};
-global.HTMLElement = HTMLElement;
-`
-###
-
 # Create placeholders for browser window objects.
 global.window =
   addEventListener: () ->

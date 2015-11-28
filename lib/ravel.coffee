@@ -1,9 +1,15 @@
 # Do nothing yet.
 console.log 'Loaded Ravel module.'
 
+FileURL = require 'file-url'
+FileAPI = require 'file-api'
+WebGL = require './webgl_stub.coffee'
+
 # Fake browser elements as necessary.
 # Load BabylonJS with the faked browser elements.
-WebGL = require './webgl_stub.coffee'
+global.FileReader = FileAPI.FileReader
+global.File = FileAPI.File
+global.XMLHttpRequest = require("xmlhttprequest").XMLHttpRequest;
 BABYLON = require 'babylonjs'
 
 # Load the BABYLON 3D engine.
@@ -33,8 +39,12 @@ createScene = ->
 scene = createScene();
 ###
 
-BABYLON.SceneLoader.Load "", "./assets/Samples/Scenes/Mansion/mansion.babylon", engine, (newScene) ->
+sceneUri = new FileAPI.File('ravel.coffee')
+rootUri = FileURL(__dirname)
+
+BABYLON.SceneLoader.Load rootUri, sceneUri, engine, (scene) ->
   console.log "loaded"
 
-engine.runRenderLoop ->
-  scene.render()
+  # Start the rendering loop.
+  engine.runRenderLoop ->
+    scene.render()
