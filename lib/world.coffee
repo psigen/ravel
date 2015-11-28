@@ -36,20 +36,6 @@ class World
       if not scene.enablePhysics new BABYLON.Vector3(0, 0, -10)
         console.error "Unable to initialize physics."
 
-      # Disable every engine option.
-      scene.audioEnabled = false
-      scene.fogEnabled = false
-      scene.lensFlaresEnabled = false
-      scene.lightsEnabled = false
-      scene.particlesEnabled = false
-      scene.postProcessesEnabled = false
-      scene.proceduralTexturesEnabled = false
-      scene.renderTargetsEnabled = false
-      scene.shadowsEnabled = false
-      scene.spritesEnabled = false
-      scene.texturesEnabled = false
-      scene.useDelayedTextureLoading = false
-
       # Create an emitter that outputs updates for this scene.
       scene.afterRender = ->
         updates = []
@@ -85,6 +71,9 @@ class World
           socket.emit 'output', 'TELEPORT SUCCESS: ' + name
         else
           socket.emit 'output', 'TELEPORT FAILED: ' + name
+
+      list: () =>
+        socket.emit 'output', 'MESHES: ' + (mesh.name for mesh in @scene.meshes)
 
     console.log 'Executing: ', command
     try
