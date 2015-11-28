@@ -1,6 +1,7 @@
 # Register Coffeescript.
 require 'coffee-script/register'
-require './lib/ravel.coffee'
+RAVEL = require './lib/ravel.coffee'
+WORLD = require './lib/world.coffee'
 {VM} = require 'vm2'
 # {NodeVM} = require 'vm2'
 
@@ -27,6 +28,10 @@ app.get '/', (req, res) ->
   res.render 'index',
     title: 'RAVEL'
     message: 'hello-world'
+
+# Create a world.
+world = new WORLD io, './assets/Samples/Scenes/hillvalley/HillValley.babylon'
+setInterval world.update, 300
 
 io.on 'connection', (socket) ->
   console.log 'User connected.'

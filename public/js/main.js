@@ -6,6 +6,10 @@ socket.on('output', function (output) {
     }, 300);
 });
 
+socket.on('update', function (update) {
+    console.log(update);
+})
+
 var langTools = ace.require("ace/ext/language_tools");
 var editor = ace.edit("editor");
 editor.getSession().setMode("ace/mode/javascript");
