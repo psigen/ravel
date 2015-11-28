@@ -5,6 +5,8 @@ class Buffer
 
 class Shader
 
+class Texture
+
 class WebGL
   bindBuffer: ->
     # Do nothing.
@@ -29,6 +31,9 @@ class WebGL
 
   createShader: ->
     return new Shader
+
+  createTexture: ->
+    return new Texture
 
   enable: ->
     # Do nothing.
