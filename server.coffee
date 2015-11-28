@@ -5,6 +5,9 @@ WORLD = require './lib/world.coffee'
 {VM} = require 'vm2'
 # {NodeVM} = require 'vm2'
 
+# Set server update rate.
+fps = 30
+
 # Create a safe (non-native) logging function to use inside the VM.
 console_log = (args...) ->
     console.log(args...)
@@ -31,7 +34,7 @@ app.get '/', (req, res) ->
 
 # Create a world.
 world = new WORLD io, './assets/Samples/Scenes/hillvalley/HillValley.babylon'
-setInterval world.update, 3000
+setInterval world.update, 1000 / fps
 
 io.on 'connection', (socket) ->
   console.log 'User connected.'

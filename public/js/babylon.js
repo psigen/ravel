@@ -31,8 +31,8 @@ socket.on('update', function (updates) {
         if (scene) {
             var mesh = scene.getMeshByID(update.id);
             if (mesh) {
-                mesh.position.copyFromFloats.apply(update.p);
-                mesh.rotation.copyFromFloats.apply(update.r);
+                mesh.position = BABYLON.Vector3.FromArray(update.p, 0);
+                mesh.rotation = BABYLON.Vector3.FromArray(update.r, 0);
             } else {
                 console.warn("Unknown update: " + update.id);
             }

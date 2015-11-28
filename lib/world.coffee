@@ -72,6 +72,9 @@ class World
     if @scene?
       @scene.render()
 
+      mesh = @scene.getMeshByName 'courthouse'
+      mesh.translate new BABYLON.Vector3(0.0, 0.0, 1.0), 0.2, BABYLON.Space.WORLD
+
     # Re-execute object scripts as necessary.
     @vm # TODO: DO STUFF
 
