@@ -4,7 +4,7 @@ var engine = new BABYLON.Engine(canvas, true);
 var scene = undefined;
 
 BABYLON.SceneLoader.ForceFullSceneLoadingForIncremental = true;
-BABYLON.SceneLoader.Load("./assets/Samples/Scenes/hillvalley/", "HillValley.babylon", engine, function (newScene) {
+BABYLON.SceneLoader.Load("./assets/Samples/Scenes/Flat2009/", "Flat2009.babylon", engine, function (newScene) {
     newScene.activeCamera.attachControl(canvas);
     if (newScene.activeCamera.keysUp) {
         newScene.activeCamera.keysUp.push(90); // Z

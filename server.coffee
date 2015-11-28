@@ -5,6 +5,7 @@ WORLD = require './lib/world.coffee'
 
 # Set server update rate.
 fps = 30
+sceneUri = './assets/Samples/Scenes/Flat2009/Flat2009.babylon'
 
 # Create a safe (non-native) logging function to use inside the VM.
 console_log = (args...) ->
@@ -24,9 +25,10 @@ app.get '/', (req, res) ->
   res.render 'babylon',
     title: 'RAVEL'
     message: 'hello-world'
+    scene: sceneUri
 
 # Create a world.
-world = new WORLD io, './assets/Samples/Scenes/hillvalley/HillValley.babylon'
+world = new WORLD io, sceneUri
 setInterval world.update, 1000 / fps
 
 io.on 'connection', (socket) ->

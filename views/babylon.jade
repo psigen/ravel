@@ -1,6 +1,6 @@
 html
   head
-    title Babylon Test World
+    title #{title}
     style
         | html, body {
         |     width: 100%;
@@ -41,7 +41,7 @@ html
         |     -ms-touch-action: none;
         | }
 body
-    canvas(id="renderCanvas")
+    canvas(id="renderCanvas", data-scene-uri="#{scene}")
     #console
         #editor
             | log('testing');

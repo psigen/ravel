@@ -3,12 +3,25 @@ Fake implementation of WebGL stub.
 ###
 class Buffer
 
+class Framebuffer
+
+class Renderbuffer
+
 class Shader
 
 class Texture
 
 class WebGL
   bindBuffer: ->
+    # Do nothing.
+
+  bindFramebuffer: ->
+    # Do nothing.
+
+  bindRenderbuffer: ->
+    # Do nothing.
+
+  bindTexture: ->
     # Do nothing.
 
   bufferData: ->
@@ -29,19 +42,37 @@ class WebGL
   createBuffer: ->
     return new Buffer
 
+  createFramebuffer: ->
+    return new Framebuffer
+
+  createRenderbuffer: ->
+    return new Renderbuffer
+
   createShader: ->
     return new Shader
 
   createTexture: ->
     return new Texture
 
-  enable: ->
-    # Do nothing.
-
   deleteBuffer: ->
     # Do nothing.
 
   depthMask: ->
+    # Do nothing.
+
+  disable: ->
+    # Do nothing.
+
+  enable: ->
+    # Do nothing.
+
+  framebufferRenderbuffer: ->
+    # Do nothing.
+
+  framebufferTexture2D: ->
+    # Do nothing.
+
+  generateMipmap: ->
     # Do nothing.
 
   getParameter: ->
@@ -56,7 +87,16 @@ class WebGL
   getShaderParameter: ->
     # Do nothing.   
 
+  renderbufferStorage: ->
+    # Do nothing.
+
   shaderSource: ->
+    # Do nothing.
+
+  texImage2D: ->
+    # Do nothing.
+
+  texParameteri: ->
     # Do nothing.
 
   viewport: ->
