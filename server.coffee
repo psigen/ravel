@@ -1,7 +1,8 @@
 # Register Coffeescript.
 require 'coffee-script/register'
-RAVEL = require './lib/ravel.coffee'
-WORLD = require './lib/world.coffee'
+Ravel = require './lib/ravel.coffee'
+World = require './lib/world.coffee'
+repl = require('repl')
 
 # Set server update rate.
 fps = 30
@@ -28,7 +29,7 @@ app.get '/', (req, res) ->
     scene: sceneUri
 
 # Create a world.
-world = new WORLD io, sceneUri
+world = new World io, sceneUri
 setInterval world.update, 1000 / fps
 
 io.on 'connection', (socket) ->
@@ -42,3 +43,6 @@ io.on 'connection', (socket) ->
 
 http.listen 3000, ->
   console.log 'listening on *:3000'
+
+# Start command line console.
+repl.start('> ').context.world = world
