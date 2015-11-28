@@ -25,13 +25,13 @@ app.set 'view engine', 'jade'
 app.use express.static(__dirname + '/public')
 
 app.get '/', (req, res) ->
-  res.render 'index',
+  res.render 'babylon',
     title: 'RAVEL'
     message: 'hello-world'
 
 # Create a world.
 world = new WORLD io, './assets/Samples/Scenes/hillvalley/HillValley.babylon'
-setInterval world.update, 300
+setInterval world.update, 3000
 
 io.on 'connection', (socket) ->
   console.log 'User connected.'

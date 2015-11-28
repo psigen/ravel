@@ -1,4 +1,3 @@
-FileURL = require 'file-url'
 FileAPI = require 'file-api'
 WebGL = require './webgl_stub.coffee'
 OIMO = require '../ext/Oimo.js'
@@ -27,7 +26,7 @@ class World
 
     # Reference a scene from file.
     sceneUri = new FileAPI.File './public/' + uri
-    rootUri = FileURL(__dirname)
+    rootUri = "file://"
 
     # Load the scene using BABYLON.
     BABYLON.SceneLoader.Load rootUri, sceneUri, engine, (scene) ->
@@ -53,15 +52,15 @@ class World
 
       # Create an emitter that outputs updates for this scene.
       scene.afterRender = ->
-        update = {}
+        updates = []
         for mesh in scene.meshes
-          update[mesh.id] =
+          updates.push
+            id: mesh.id
             p: mesh.position.asArray()
             r: mesh.rotation.asArray()
-        io.emit self.id, update
+        io.emit self.id, updates
 
       # Add the scene as an accessible member.
-      console.log 'scene'
       self.scene = scene
 
     @vm = new VM
