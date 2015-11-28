@@ -67,13 +67,40 @@ class World
       timeout: 100,
       sandbox: {}
 
+  execute: (socket, command) =>
+    sandbox =
+      log: (args...) ->
+        socket.emit 'output', '[LOG]   ' + args
+      info: (args...) ->
+        socket.emit 'output', '[INFO]  ' + args
+      warn: (args...) ->
+        socket.emit 'output', '[WARN]  ' + args
+      error: (args...) ->
+        socket.emit 'output', '[ERROR] ' + args
+
+      teleport: (name, x, y, z) =>
+        mesh = @scene.getMeshByName(name)
+        if mesh?
+          mesh.position.addInPlace new BABYLON.Vector3(x, y, z)
+          socket.emit 'output', 'TELEPORT SUCCESS: ' + name
+        else
+          socket.emit 'output', 'TELEPORT FAILED: ' + name
+
+    console.log 'Executing: ', command
+    try
+        @vm.options.sandbox = sandbox
+        @vm.run command
+    catch err
+        console.error err
+        socket.emit 'output', '[TRACE] ' + err
+
   update: =>
     # Step physics forward and send out update.
     if @scene?
       @scene.render()
 
-      mesh = @scene.getMeshByName 'courthouse'
-      mesh.translate new BABYLON.Vector3(0.0, 0.0, 1.0), 0.2, BABYLON.Space.WORLD
+      #mesh = @scene.getMeshByName 'courthouse'
+      #mesh.translate new BABYLON.Vector3(0.0, 0.0, 1.0), 0.2, BABYLON.Space.WORLD
 
     # Re-execute object scripts as necessary.
     @vm # TODO: DO STUFF

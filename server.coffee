@@ -2,8 +2,6 @@
 require 'coffee-script/register'
 RAVEL = require './lib/ravel.coffee'
 WORLD = require './lib/world.coffee'
-{VM} = require 'vm2'
-# {NodeVM} = require 'vm2'
 
 # Set server update rate.
 fps = 30
@@ -11,11 +9,6 @@ fps = 30
 # Create a safe (non-native) logging function to use inside the VM.
 console_log = (args...) ->
     console.log(args...)
-
-# Create a VM with access to console, but not native plugins.
-vm = new VM
-    timeout: 100,
-    sandbox: {}
 
 # Start a web server with Socket.IO.
 express = require('express')
@@ -39,27 +32,11 @@ setInterval world.update, 1000 / fps
 io.on 'connection', (socket) ->
   console.log 'User connected.'
 
-  sandbox =
-    log: (args...) ->
-        socket.emit 'output', '[LOG]   ' + args
-    info: (args...) ->
-        socket.emit 'output', '[INFO]  ' + args
-    warn: (args...) ->
-        socket.emit 'output', '[WARN]  ' + args
-    error: (args...) ->
-        socket.emit 'output', '[ERROR] ' + args
-
   socket.on 'disconnect', ->
     console.log 'User disconnected.'
 
   socket.on 'execute', (command) ->
-    console.log 'Executing...'
-    try
-        vm.options.sandbox = sandbox
-        vm.run command
-    catch err
-        console.error err
-        socket.emit 'output', '[TRACE] ' + err
+    world.execute(socket, command)
 
 http.listen 3000, ->
   console.log 'listening on *:3000'
