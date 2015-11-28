@@ -1,13 +1,10 @@
-# Do nothing yet.
-console.log 'Loaded Ravel module.'
-
 FileURL = require 'file-url'
 FileAPI = require 'file-api'
 WebGL = require './webgl_stub.coffee'
 OIMO = require '../ext/Oimo.js'
 
-# Fake browser elements as necessary.
-# Load BabylonJS with the faked browser elements.
+# Load BabylonJS with faked browser elements.
+# TODO: how do we do this without the scope issues?
 global.FileReader = FileAPI.FileReader
 global.File = FileAPI.File
 global.OIMO = OIMO
@@ -23,6 +20,12 @@ engine = new BABYLON.Engine canvas, false
 #sceneUri = new FileAPI.File('./assets/Samples/Scenes/Mansion/Mansion.babylon')
 sceneUri = new FileAPI.File('./assets/Samples/Scenes/hillvalley/HillValley.babylon')
 rootUri = FileURL(__dirname)
+
+# Define the mesh object update format.
+meshUpdate = (mesh) ->
+  id: mesh.id
+  p: mesh.position.asArray()
+  r: mesh.rotation.asArray()
 
 # Load the scene using BABYLON.
 BABYLON.SceneLoader.Load rootUri, sceneUri, engine, (scene) ->
@@ -45,6 +48,11 @@ BABYLON.SceneLoader.Load rootUri, sceneUri, engine, (scene) ->
   scene.spritesEnabled = false
   scene.texturesEnabled = false
   scene.useDelayedTextureLoading = false
+
+  # Create an emitter that outputs updates for this level.
+  scene.afterRender = ->    
+    update = (meshUpdate(mesh) for mesh in scene.meshes)
+    socket.emit id, update
 
   # Start the rendering loop.
   console.log "Starting rendering loop."
