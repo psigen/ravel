@@ -4,11 +4,13 @@ console.log 'Loaded Ravel module.'
 FileURL = require 'file-url'
 FileAPI = require 'file-api'
 WebGL = require './webgl_stub.coffee'
+OIMO = require '../ext/Oimo.js'
 
 # Fake browser elements as necessary.
 # Load BabylonJS with the faked browser elements.
 global.FileReader = FileAPI.FileReader
 global.File = FileAPI.File
+global.OIMO = OIMO
 global.XMLHttpRequest = require("xmlhttprequest").XMLHttpRequest;
 BABYLON = require 'babylonjs'
 
@@ -39,12 +41,16 @@ createScene = ->
 scene = createScene();
 ###
 
-sceneUri = new FileAPI.File('ravel.coffee')
+sceneUri = new FileAPI.File('../assets/Samples/Scenes/Mansion/Mansion.babylon')
 rootUri = FileURL(__dirname)
 
 BABYLON.SceneLoader.Load rootUri, sceneUri, engine, (scene) ->
-  console.log "loaded"
+  console.log "Loaded: " + sceneUri.path
+
+  if not scene.enablePhysics new BABYLON.Vector3(0, 0, -10)
+    console.error "Unable to initialize physics."
 
   # Start the rendering loop.
   engine.runRenderLoop ->
+    console.log scene.getPhysicsEngine()
     scene.render()
