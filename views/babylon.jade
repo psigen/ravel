@@ -2,30 +2,57 @@ html
   head
     title Babylon Test World
     style
-      | html, body {
-      |     width: 100%;
-      |     height: 100%;
-      |     padding: 0;
-      |     margin: 0;
-      |     overflow: hidden;
-      |     background-color: #326696;
-      |     margin: 0px;
-      |     overflow: hidden;
-      |     font-family: Monospace;
-      |     font-size: 13px;
-      |     text-align: center;
-      |     font-weight: bold;
-      |     text-align: center;
-      | }
-      | #renderCanvas {
-      |     width: 100%;
-      |     height: 100%;
-      |     touch-action: none;
-      |     -ms-touch-action: none;
-      | }
+        | html, body {
+        |     width: 100%;
+        |     height: 100%;
+        |     padding: 0;
+        |     margin: 0;
+        |     overflow: hidden;
+        |     background-color: #326696;
+        |     margin: 0px;
+        |     overflow: hidden;
+        |     font-family: Monospace;
+        |     font-size: 13px;
+        |     font-weight: bold;
+        | }
+        | #renderCanvas {
+        |     width: 100%;
+        |     height: 100%;
+        |     touch-action: none;
+        |     -ms-touch-action: none;
+        | }
+        | #editor {
+        |     position: absolute;
+        |     top: 0;
+        |     left: 0;
+        |     height: 100px;
+        |     width: 700px;
+        |     background-color: rgba(1.0, 1.0, 1.0, 0.2);
+        |     touch-action: none;
+        |     -ms-touch-action: none;
+        | }
+        | #response {
+        |     position: absolute;
+        |     top: 100px;
+        |     left: 0;
+        |     height: 200px;
+        |     width: 700px;
+        |     touch-action: none;
+        |     -ms-touch-action: none;
+        | }
 body
     canvas(id="renderCanvas")
+    #console
+        #editor
+            | log('testing');
+        #commandline(style="position: absolute; bottom: 10px; height: 20px; width: 800px;")
+        ul#response
+
     script(src="/socket.io/socket.io.js" type="text/javascript")
-    script(src="http://cdn.babylonjs.com/2-2/babylon.max.js")
-    script(src="js/babylon.js" type="text/javascript")
+    script(src="//rawgithub.com/ajaxorg/ace-builds/master/src/ace.js" type="text/javascript")
+    script(src="//rawgithub.com/ajaxorg/ace-builds/master/src/ext-language_tools.js" type="text/javascript")
+    script(src="//code.jquery.com/jquery-2.0.3.min.js" type="text/javascript")
+    script(src="//cdn.babylonjs.com/2-2/babylon.max.js")
+    script(src="js/viewer.js" type="text/javascript")
+    script(src="js/console.js" type="text/javascript")
     
