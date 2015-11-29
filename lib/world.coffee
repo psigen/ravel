@@ -18,40 +18,49 @@ engine = new BABYLON.Engine canvas, false
 
 # Define a class representing a player world.
 class World
-  constructor: (io, uri) ->
+  constructor: (io, @rootUri, @sceneUri) ->
     # Create a unique ID for this scene.
     # TODO: make this unique
-    self = @
-    self.id = 'update'
+    @id = 'test'
+    @io = io.of '/' + @id
 
     # Reference a scene from file.
-    sceneUri = new FileAPI.File './public/' + uri
-    rootUri = "file://"
+    # TODO: What the hell is going on in here?
+    mungedSceneUri = new FileAPI.File './public/' + @rootUri + '/' + @sceneUri
+    mungedRootUri = "file://"
 
     # Load the scene using BABYLON.
-    BABYLON.SceneLoader.Load rootUri, sceneUri, engine, (scene) ->
-      console.log "Loaded: " + sceneUri.path
+    BABYLON.SceneLoader.Load mungedRootUri, mungedSceneUri, engine, (scene) =>
+      console.log "Loaded: " + mungedSceneUri.path
 
       # Enable physics using default plugin (Oimo)
       if not scene.enablePhysics new BABYLON.Vector3(0, 0, -10)
         console.error "Unable to initialize physics."
 
       # Create an emitter that outputs updates for this scene.
-      scene.afterRender = ->
+      # TODO: actually diff which meshes changed position.
+      scene.afterRender = =>
         updates = []
         for mesh in scene.meshes
           updates.push
             id: mesh.id
             p: mesh.position.asArray()
             r: mesh.rotation.asArray()
-        io.emit self.id, updates
+        @io.emit 'update', updates
 
       # Add the scene as an accessible member.
-      self.scene = scene
+      @scene = scene
 
     @vm = new VM
       timeout: 100,
       sandbox: {}
+
+  initialize: (socket) =>
+    # Tell the client which world to load.
+    socket.emit 'world',
+      id: @id
+      rootUri: @rootUri
+      sceneUri: @sceneUri
 
   execute: (socket, command) =>
     sandbox =
@@ -87,9 +96,6 @@ class World
     # Step physics forward and send out update.
     if @scene?
       @scene.render()
-
-      #mesh = @scene.getMeshByName 'courthouse'
-      #mesh.translate new BABYLON.Vector3(0.0, 0.0, 1.0), 0.2, BABYLON.Space.WORLD
 
     # Re-execute object scripts as necessary.
     @vm # TODO: DO STUFF

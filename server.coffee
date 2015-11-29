@@ -6,11 +6,7 @@ repl = require('repl')
 
 # Set server update rate.
 fps = 30
-sceneUri = './assets/Samples/Scenes/Flat2009/Flat2009.babylon'
-
-# Create a safe (non-native) logging function to use inside the VM.
-console_log = (args...) ->
-    console.log(args...)
+sceneUri = ['./assets/Samples/Scenes/Flat2009/', 'Flat2009.babylon']
 
 # Start a web server with Socket.IO.
 express = require('express')
@@ -26,14 +22,16 @@ app.get '/', (req, res) ->
   res.render 'babylon',
     title: 'RAVEL'
     message: 'hello-world'
-    scene: sceneUri
 
 # Create a world.
-world = new World io, sceneUri
+world = new World io, sceneUri[0], sceneUri[1]
 setInterval world.update, 1000 / fps
 
 io.on 'connection', (socket) ->
   console.log 'User connected.'
+
+  # Put client into default world.
+  world.initialize socket
 
   socket.on 'disconnect', ->
     console.log 'User disconnected.'
