@@ -19,10 +19,12 @@ engine = new BABYLON.Engine canvas, false
 # Define a class representing a player world.
 class World
   constructor: (io, @rootUri, @sceneUri) ->
-    # Create a unique ID for this scene.
-    # TODO: make this unique
-    @id = 'test'
+    # Create a unique ID to represent this world.
+    @id = UUID.v1()
+
+    # Set up a Socket.IO namespace for world events.
     @io = io.of '/' + @id
+    @io.on 'connection', @connect
 
     # Reference a scene from file.
     # TODO: What the hell is going on in here?
@@ -51,18 +53,28 @@ class World
       # Add the scene as an accessible member.
       @scene = scene
 
-    @vm = new VM
-      timeout: 100,
-      sandbox: {}
-
+  # Tell a client how to connect to this world.
+  # TODO: this probably doesn't need to happen inside World?
   initialize: (socket) =>
-    # Tell the client which world to load.
     socket.emit 'world',
       id: @id
       rootUri: @rootUri
       sceneUri: @sceneUri
 
+  # A player has connected.
+  connect: (socket) -> 
+    # Add an event handler for disconnection. 
+    socket.on 'disconnect', ->
+      @disconnect socket
+
+    # TODO: Add a new player avatar to this world.
+
+  # A player has disconnected.
+  disconnect: (socket) ->
+    # TODO: Remove the player avatar from this world.
+
   execute: (socket, command) =>
+    # Create the sandbox scope for the player command.
     sandbox =
       log: (args...) ->
         socket.emit 'output', '[LOG]   ' + args
@@ -84,13 +96,14 @@ class World
       list: () =>
         socket.emit 'output', 'MESHES: ' + (mesh.name for mesh in @scene.meshes)
 
+    # Attempt to execute a player command in the sandbox.        
     console.log 'Executing: ', command
     try
-        @vm.options.sandbox = sandbox
-        @vm.run command
+        vm = new VM { timeout: 100, sandbox: sandbox }
+        vm.run command
     catch err
         console.error err
-        socket.emit 'output', '[TRACE] ' + err
+        socket.emit 'output', '[FAILED] ' + err
 
   update: =>
     # Step physics forward and send out update.
