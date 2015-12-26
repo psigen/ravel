@@ -32,8 +32,7 @@ io.on 'connection', (socket) ->
   world.initialize socket
 
   # TODO: remove this.
-  world.add 'him', './assets/Samples/Scenes/Dude/', 'Dude.babylon', ->
-    console.log 'thing'
+  # world.add 'him', './assets/Samples/Scenes/Dude/', 'Dude.babylon', (id) ->
 
   socket.on 'disconnect', ->
     console.log 'User disconnected.'
