@@ -29,15 +29,10 @@ setInterval world.update, 1000 / fps
 
 io.on 'connection', (socket) ->
   console.log 'User connected.'
-
-  # Put client into default world.
   world.initialize socket
 
   socket.on 'disconnect', ->
     console.log 'User disconnected.'
-
-  socket.on 'execute', (command) ->
-    world.execute(socket, command)
 
 http.listen 3000, ->
   console.log 'listening on *:3000'

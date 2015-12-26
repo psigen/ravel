@@ -38,7 +38,7 @@ socket.on('world', function (newWorld) {
 
         // Remove a mesh from the world.
         worldSocket.on('remove', function (id) {
-            var mesh = newScene.getMeshByID(update.id);
+            var mesh = newScene.getMeshByID(id);
             if (mesh) {
                 mesh.dispose();
             } else {

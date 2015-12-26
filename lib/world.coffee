@@ -16,6 +16,12 @@ BABYLON = require 'babylonjs'
 canvas = document.createElement "canvas"
 engine = new BABYLON.Engine canvas, false
 
+# Perform munging to make local scene URIs work.
+# TODO: What the hell is going on in here?
+mungeUri = (rootUri, sceneUri) ->
+  rootUri: "file://"
+  sceneUri: new FileAPI.File './public/' + rootUri + '/' + sceneUri
+
 # Define a class representing a player world.
 class World
   constructor: (io, @rootUri, @sceneUri) ->
@@ -27,13 +33,11 @@ class World
     @io.on 'connection', @connect
 
     # Reference a scene from file.
-    # TODO: What the hell is going on in here?
-    mungedSceneUri = new FileAPI.File './public/' + @rootUri + '/' + @sceneUri
-    mungedRootUri = "file://"
+    munged = mungeUri @rootUri, @sceneUri
 
     # Load the scene using BABYLON.
-    BABYLON.SceneLoader.Load mungedRootUri, mungedSceneUri, engine, (scene) =>
-      console.log "Loaded: " + mungedSceneUri.path
+    BABYLON.SceneLoader.Load munged.rootUri, munged.sceneUri, engine, (scene) =>
+      console.log "Loaded: " + munged.sceneUri.path
 
       # Enable physics using default plugin (Oimo)
       if not scene.enablePhysics new BABYLON.Vector3(0, 0, -10)
@@ -52,6 +56,9 @@ class World
 
       # Add the scene as an accessible member.
       @scene = scene
+      @diffs =
+        add: {}
+        remove: []
 
   # Tell a client how to connect to this world.
   # TODO: this probably doesn't need to happen inside World?
@@ -61,17 +68,25 @@ class World
       rootUri: @rootUri
       sceneUri: @sceneUri
 
-  # A player has connected.
-  connect: (socket) -> 
-    # Add an event handler for disconnection. 
-    socket.on 'disconnect', ->
+    for id, mesh in @diffs.add
+      socket.emit 'add', id, mesh
+
+    for id in @diffs.remove
+      socket.emit 'remove', id
+
+    socket.on 'disconnect', =>
       @disconnect socket
 
-    # TODO: Add a new player avatar to this world.
+    socket.on 'execute', (command) =>
+      @execute socket, command
 
   # A player has disconnected.
-  disconnect: (socket) ->
+  disconnect: (socket) =>
     # TODO: Remove the player avatar from this world.
+
+  # A player has connected.
+  connect: (socket) =>
+    # TODO: when does this actually happen?
 
   execute: (socket, command) =>
     # Create the sandbox scope for the player command.
@@ -112,5 +127,43 @@ class World
 
     # Re-execute object scripts as necessary.
     @vm # TODO: DO STUFF
+
+  # Add an object to the world.
+  add: (name, rootUri, sceneUri, callback) =>
+    # Create a mesh structure to track what was loaded.
+    mesh =
+      name: name
+      rootUri: rootUri
+      sceneUri: sceneUri
+
+    # Reference a scene from file.
+    munged = mungeUri mesh.rootUri, mesh.sceneUri
+
+    # Load the munged mesh.
+    BABYLON.SceneLoader.ImportMesh name, munged.rootUri, munged.sceneUri, @scene, (newMeshes, particleSystems, skeletons) ->
+
+      # Add the loaded mesh to the diff structure.
+      @diffs.add id, mesh
+
+      # Add mesh to clients.
+      socket.emit 'add', id, mesh
+
+      # Trigger callback with id of loaded mesh.
+      callback id
+
+  # Remove an object from the world.
+  remove: (id) =>
+    # Remove mesh from diff structure.
+    if id in @diffs.add
+      delete @diffs[id]
+    else
+      @diffs.remove.push id
+
+    # Remove mesh from canonical world.
+    mesh = newScene.getMeshByID id
+    mesh.dispose()
+
+    # Remove mesh from clients.
+    socket.emit 'remove', id
 
 module.exports = World
