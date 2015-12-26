@@ -16,15 +16,6 @@ socket.on('world', function (newWorld) {
         // Configure the camera controls for this scene.
         // TODO: implement an actual player avatar.
         newScene.activeCamera.attachControl(canvas);
-        if (newScene.activeCamera.keysUp) {
-            newScene.activeCamera.keysUp.push(90); // Z
-            newScene.activeCamera.keysUp.push(87); // W
-            newScene.activeCamera.keysDown.push(83); // S
-            newScene.activeCamera.keysLeft.push(65); // A
-            newScene.activeCamera.keysLeft.push(81); // Q
-            newScene.activeCamera.keysRight.push(69); // E
-            newScene.activeCamera.keysRight.push(68); // D
-        }
 
         // Add this scene to the global rendering loop.
         newScene.executeWhenReady(function() {
@@ -33,10 +24,29 @@ socket.on('world', function (newWorld) {
             });
         });
 
-        // Update the poses of the meshes in the world on server update.
         // TODO: This should not require 'window.location.origin':
         // https://github.com/socketio/socket.io-client/issues/812#issuecomment-132659821
         var worldSocket = io(window.location.origin + '/' + newWorld.id);
+
+        // Add a mesh to the world.
+        worldSocket.on('add', function (id, mesh) {
+            BABYLON.SceneLoader.ImportMesh(mesh.name, mesh.rootUri, mesh.sceneUri, scene, function (newMeshes, particleSystems, skeletons) {
+                newMeshes[0].id = id;
+                console.warn("Added mesh: " + id);
+            });
+        });
+
+        // Remove a mesh from the world.
+        worldSocket.on('remove', function (id) {
+            var mesh = newScene.getMeshByID(update.id);
+            if (mesh) {
+                mesh.dispose();
+            } else {
+                console.warn("Unknown removal: " + id);
+            }
+        });
+
+        // Update the poses of the meshes in the world on server update.
         worldSocket.on('update', function (updates) {
             updates.forEach(function(update) {
                 var mesh = newScene.getMeshByID(update.id);
@@ -47,7 +57,7 @@ socket.on('world', function (newWorld) {
                     console.warn("Unknown update: " + update.id);
                 }
             });
-        })
+        });
 
         // Set up shutdown hooks for this scene.
         newScene.onDispose = function () {
