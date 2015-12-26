@@ -19,8 +19,8 @@ engine = new BABYLON.Engine canvas, false
 # Perform munging to make local scene URIs work.
 # TODO: What the hell is going on in here?
 mungeUri = (rootUri, sceneUri) ->
-  rootUri: "file://"
-  sceneUri: new FileAPI.File './public/' + rootUri + '/' + sceneUri
+  rootUri: "http://localhost:3000/" + rootUri
+  sceneUri: sceneUri
 
 # Define a class representing a player world.
 class World
@@ -148,13 +148,13 @@ class World
     munged = mungeUri mesh.rootUri, mesh.sceneUri
 
     # Load the munged mesh.
-    BABYLON.SceneLoader.ImportMesh name, munged.rootUri, munged.sceneUri, @scene, (newMeshes, particleSystems, skeletons) ->
+    BABYLON.SceneLoader.ImportMesh name, munged.rootUri, munged.sceneUri, @scene, (newMeshes, particleSystems, skeletons) =>
 
       # Extract mesh ID from the first loaded mesh.
       id = newMeshes[0].id
 
       # Add the loaded mesh to the diff structure and send to clients.
-      @diffs.add id, mesh
+      @diffs.add[id] = mesh
       @io.emit 'add', id, mesh
 
       # Trigger callback with id of loaded mesh.
