@@ -32,7 +32,9 @@ socket.on('world', function (newWorld) {
         worldSocket.on('add', function (id, mesh) {
             BABYLON.SceneLoader.ImportMesh(mesh.name, mesh.rootUri, mesh.sceneUri, scene, function (newMeshes, particleSystems, skeletons) {
                 newMeshes[0].id = id;
-                console.warn("Added mesh: " + id);
+                console.info("Added mesh: " + id);
+            }, undefined, function() {
+                console.warn("Unknown addition: " + id + " -> " + mesh);
             });
         });
 
@@ -41,6 +43,7 @@ socket.on('world', function (newWorld) {
             var mesh = newScene.getMeshByID(id);
             if (mesh) {
                 mesh.dispose();
+                console.info("Removed: " + id);
             } else {
                 console.warn("Unknown removal: " + id);
             }

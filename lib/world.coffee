@@ -68,12 +68,6 @@ class World
       rootUri: @rootUri
       sceneUri: @sceneUri
 
-    for id, mesh in @diffs.add
-      socket.emit 'add', id, mesh
-
-    for id in @diffs.remove
-      socket.emit 'remove', id
-
     socket.on 'disconnect', =>
       @disconnect socket
 
@@ -86,7 +80,13 @@ class World
 
   # A player has connected.
   connect: (socket) =>
-    # TODO: when does this actually happen?
+    # Add objects not in original world.
+    for id, mesh in @diffs.add
+      socket.emit 'add', id, mesh
+
+    # Remove objects no longer in original world.
+    for id in @diffs.remove
+      socket.emit 'remove', id
 
   execute: (socket, command) =>
     # Create the sandbox scope for the player command.
@@ -107,6 +107,14 @@ class World
           socket.emit 'output', 'TELEPORT SUCCESS: ' + name
         else
           socket.emit 'output', 'TELEPORT FAILED: ' + name
+
+      remove: (name) =>
+        mesh = @scene.getMeshByName(name)
+        if mesh?
+          @remove(mesh.id)
+          socket.emit 'output', 'REMOVE SUCCESS: ' + name
+        else
+          socket.emit 'output', 'REMOVE FAILED: ' + name
 
       list: () =>
         socket.emit 'output', 'MESHES: ' + (mesh.name for mesh in @scene.meshes)
@@ -147,7 +155,7 @@ class World
 
       # Add the loaded mesh to the diff structure and send to clients.
       @diffs.add id, mesh
-      socket.emit 'add', id, mesh
+      @io.emit 'add', id, mesh
 
       # Trigger callback with id of loaded mesh.
       if callback?
@@ -162,10 +170,9 @@ class World
       @diffs.remove.push id
 
     # Remove mesh from canonical world.
-    mesh = newScene.getMeshByID id
-    mesh.dispose()
-
-    # Remove mesh from clients.
-    socket.emit 'remove', id
+    mesh = @scene.getMeshByID id
+    if mesh?
+      mesh.dispose()
+      @io.emit 'remove', id
 
 module.exports = World
