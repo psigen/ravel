@@ -142,14 +142,16 @@ class World
     # Load the munged mesh.
     BABYLON.SceneLoader.ImportMesh name, munged.rootUri, munged.sceneUri, @scene, (newMeshes, particleSystems, skeletons) ->
 
-      # Add the loaded mesh to the diff structure.
-      @diffs.add id, mesh
+      # Extract mesh ID from the first loaded mesh.
+      id = newMeshes[0].id
 
-      # Add mesh to clients.
+      # Add the loaded mesh to the diff structure and send to clients.
+      @diffs.add id, mesh
       socket.emit 'add', id, mesh
 
       # Trigger callback with id of loaded mesh.
-      callback id
+      if callback?
+        callback id
 
   # Remove an object from the world.
   remove: (id) =>

@@ -31,6 +31,10 @@ io.on 'connection', (socket) ->
   console.log 'User connected.'
   world.initialize socket
 
+  # TODO: remove this.
+  #world.add 'him', './assets/Samples/Scenes/Dude/', 'Dude.babylon', ->
+  #  console.log 'thing'
+
   socket.on 'disconnect', ->
     console.log 'User disconnected.'
 
